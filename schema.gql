@@ -1,0 +1,25 @@
+type PowerFuture {
+   tradeTime: Time!
+   tradePrice: Float
+   closePrice: Float
+}
+
+type PowerSpot {
+   timestamp: Time! @unique(index: "power_spot_timestamp")
+   price: Float
+}
+
+type PowerSpotDailyForecast {
+   time: Time! @unique
+   price: Float
+}
+
+type PowerSpotForecast {
+   time: Time! @unique
+   price: Float
+}
+
+type Query {
+   allPowerFutures: [PowerFuture!]
+   allPowerSpots: [PowerSpot!]
+}

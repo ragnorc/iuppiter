@@ -28,10 +28,12 @@ RUN pip install pycparser \
 RUN pip install 'pystan>=2.19.0, <3.0.0'
 RUN pip install 'holidays==0.9.12'
 RUN pip install 'fbprophet<0.6'
+RUN pip install 'PyGithub'
 
 COPY src/ /src/
-ENV PREFECT__CLOUD__AGENT__AUTH_TOKEN=RgvvYs31p8KiKB2iFXfR8g
-ENTRYPOINT [ "python", "/src/main.py" ]
+#ENV PREFECT__CLOUD__AGENT__AUTH_TOKEN=RgvvYs31p8KiKB2iFXfR8g
+ENTRYPOINT [ "prefect", "agent", "start", "local", "-t" ,"tpqKLNNyqrwjSFjK4KAypQ" ]
+#ENTRYPOINT [ "python", "/src/main.py" ]
 
 # Pythonnet: 2.5.0 (from PyPI)
 # Note: pycparser must be installed before pythonnet can be built

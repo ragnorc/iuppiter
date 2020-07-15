@@ -18,5 +18,5 @@ storage = storage.build()
 fetch_daily_power_spot_flow.storage = storage
 #print(storage.flows)
 #spot_flow.register(project_name="iuppiter", build=False)
-fetch_daily_power_spot_flow.register(project_name="iuppiter")
+fetch_daily_power_spot_flow.register(project_name="iuppiter", build=False)
 print("ran docker")

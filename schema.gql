@@ -5,17 +5,13 @@ type PowerFuture {
 }
 
 type PowerSpot {
-   timestamp: Time! @unique(index: "power_spot_timestamp")
+   datetime: String! @unique(index: "power_spot_datetime")
    price: Float
 }
 
-type PowerSpotDailyForecast {
-   time: Time! @unique
-   price: Float
-}
 
 type PowerSpotForecast {
-   time: Time! @unique
+   datetime: String! @unique(index: "power_spot_forecast_datetime")
    price: Float
 }
 

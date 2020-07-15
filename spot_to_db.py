@@ -12,7 +12,7 @@ def chunk(seq, size):
 df = pd.read_csv('spot.csv')
 df['time'] = (df['date'].str[0:10] + " " + df['period'].str[0:2] + ":00:00")
 df['time'] = df["time"].astype("datetime64")
-df["time"] = df["time"].dt.tz_localize('Europe/Berlin', ambiguous='infer').dt.tz_convert(None)
+df["time"] = df["time"]
 df['price'] = df['price']
 df.to_csv("spotutc.csv", index=False)
 print(type(json.loads(df.iloc[0:5].to_json(orient='records'))))
@@ -26,11 +26,8 @@ for df in chunk(df, 5000):
    q.map_expr(
         lambda item:  q.call(
     q.function('upsert'),
-    [ 'PowerSpot','power_spot_timestamp',q.time(q.select("time", item)),  {
-                "timestamp": q.time(q.select("time", item)),
-                "price": q.select("price", item)
-            } ],
+    [ 'PowerSpot','power_spot_datetime',q.select("datetime", item),  item ],
   ),
-        json.loads(df.to_json(orient='records', date_format="iso"))
+      [ {"datetime": x["time"].replace('Z', ''), "price": x["price"]} for x in json.loads(df.to_json(orient='records', date_format="iso")) ]
         )
     )

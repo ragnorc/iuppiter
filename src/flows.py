@@ -33,7 +33,7 @@ def fetch_historical_spot():
     df["ds"] = pd.to_datetime(df['ds'])
     return df
 
-@task()
+@task
 def train_prophet(historical_spot):
     print("hello local")
     model = Prophet(daily_seasonality=True)
@@ -41,7 +41,7 @@ def train_prophet(historical_spot):
     print(historical_spot)
     return model.fit(historical_spot)
 
-@task()
+@task
 def predict_spot(model, historical_spot, years):
     future = pd.date_range(start=(historical_spot["ds"]).max(), end=historical_spot["ds"].max()+pd.offsets.DateOffset(years=years), freq="H").to_frame(index=False, name='ds')
     forecast = model.predict(future)

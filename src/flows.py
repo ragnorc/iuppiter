@@ -21,7 +21,7 @@ def fetch_daily_spot():
     logger = prefect.context.get("logger")
     logger.info("An info message.")
     logger.warning("A warning message.")
-    print([ point["price.amount"]  for point in xmltodict.parse(res.content)["Publication_MarketDocument"]["TimeSeries"]["Period"]["Point"]])
+    logger.info(str([ point["price.amount"]  for point in xmltodict.parse(res.content)["Publication_MarketDocument"]["TimeSeries"]["Period"]["Point"]]))
 
 @task
 def fetch_historical_spot():

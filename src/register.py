@@ -5,7 +5,6 @@ import prefect
 from prefect import task, Flow
 from prefect.environments.storage import GitHub
 from prefect.agent import Agent
-from flows import forecast_power_spot_flow
 from power_spot_flow import power_spot_flow
 
 

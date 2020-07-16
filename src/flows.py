@@ -57,6 +57,7 @@ def write_to_db(items, fn, collection, index, unique_key):
     client = FaunaClient(secret="fnADwBbPWHACBcWfAJOyZUHjoJ5cMFuZu3k9B2NO")
     items = [fn(item) for item in json.loads(items.to_json(orient='records', date_format="iso"))]
     for items in chunk(items, 500):
+        prefect.context.get("logger").info(str(items))
         client.query(
     q.map_expr(
         lambda item:

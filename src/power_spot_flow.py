@@ -46,11 +46,11 @@ def predict_spot(model, historical_spot, years):
     return forecast
 
 @task
-def write_to_db(items, fn, collection, index, unique_key):
+def write_to_db(items, collection, index, unique_key):
     def chunk(seq, size):
         return (seq[pos:pos + size] for pos in range(0, len(seq), size))
     client = FaunaClient(secret="fnADwBbPWHACBcWfAJOyZUHjoJ5cMFuZu3k9B2NO")
-    items = [fn(item) for item in json.loads(items.to_json(orient='records', date_format="iso"))]
+    items = [{"datetime": item['ds'].replace('Z', ''), "price": item['yhat'], **item} for item in json.loads(items.to_json(orient='records', date_format="iso"))]
     for items in chunk(items, 500):
         prefect.context.get("logger").info(str(items))
         client.query(
@@ -70,4 +70,4 @@ with Flow('Power Spot Flow') as power_spot_flow:
     historical_spot = fetch_historical_spot()
     trained_model = train_prophet(historical_spot)
     forecast = predict_spot(trained_model, historical_spot, 6)
-    write_to_db(forecast, lambda item: {"datetime": item['ds'].replace('Z', ''), "price": item['yhat'], **item}, "PowerSpotForecast","power_spot_forecast_datetime", "datetime")
+    write_to_db(forecast, "PowerSpotForecast","power_spot_forecast_datetime", "datetime")

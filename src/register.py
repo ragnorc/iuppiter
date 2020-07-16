@@ -19,3 +19,4 @@ power_spot_flow.storage = GitHub(repo="ragnorc/iuppiter", path="src/power_spot_f
 #print(storage.flows)
 print("Registering flows...")
 power_spot_flow.register(project_name="iuppiter", build=True)
+power_spot_flow.run()

@@ -30,10 +30,8 @@ RUN pip install 'holidays==0.9.12'
 RUN pip install 'fbprophet<0.6' 
 RUN pip install 'PyGithub'
 
-COPY src/ /src/
-#ENV PREFECT__CLOUD__AGENT__AUTH_TOKEN=RgvvYs31p8KiKB2iFXfR8g
-ENV PREFECT__CONTEXT__SECRETS__GITHUB_ACCESS_TOKEN=f4406b8f23a45827ce0d56519246d9750a919c93
-ENTRYPOINT [ "prefect", "agent", "start", "local", "-t" ,"tpqKLNNyqrwjSFjK4KAypQ" ]
+#ENV PREFECT__CONTEXT__SECRETS__GITHUB_ACCESS_TOKEN=
+ENTRYPOINT [ "prefect", "agent", "start", "local"]
 #ENTRYPOINT [ "python", "/src/main.py" ]
 
 # Pythonnet: 2.5.0 (from PyPI)

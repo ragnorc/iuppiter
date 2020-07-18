@@ -30,7 +30,9 @@ RUN pip install 'holidays==0.9.12'
 RUN pip install 'fbprophet<0.6' 
 RUN pip install 'PyGithub'
 
-#ENV PREFECT__CONTEXT__SECRETS__GITHUB_ACCESS_TOKEN=
+ENV PREFECT__CLOUD__AGENT__AUTH_TOKEN=${PREFECT__CLOUD__AGENT__AUTH_TOKEN}
+ENV PREFECT__CONTEXT__SECRETS__GITHUB_ACCESS_TOKEN=${PREFECT__CONTEXT__SECRETS__GITHUB_ACCESS_TOKEN}
+
 ENTRYPOINT [ "prefect", "agent", "start", "local"]
 #ENTRYPOINT [ "python", "/src/main.py" ]
 

@@ -49,7 +49,7 @@ def write_to_db(items, collection, index, unique_key):
     client = FaunaClient(secret="fnADwBbPWHACBcWfAJOyZUHjoJ5cMFuZu3k9B2NO")
     items = [{"datetime": item['ds'].replace('Z', ''), "price": item['yhat'], **item} for item in json.loads(items.to_json(orient='records', date_format="iso"))]
     for items in chunk(items, 500):
-        print(str(items))
+        print(len(items))
         client.query(
     q.map_expr(
         lambda item:

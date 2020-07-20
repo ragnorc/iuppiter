@@ -61,7 +61,6 @@ def write_to_db(items, collection, index, unique_key):
     )
 
 
-print(os.environ["FAUNA_SECRET"])
 fetch_daily_spot()
 historical_spot = fetch_historical_spot()
 trained_model = train_prophet(historical_spot)

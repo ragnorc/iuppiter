@@ -1,5 +1,3 @@
-import prefect
-from prefect import task, Flow
 from fbprophet import Prophet
 from fbprophet.plot import add_changepoints_to_plot
 import pandas as pd
@@ -13,12 +11,12 @@ import requests
 import xmltodict
 
 
-@task
+
 def fetch_daily_spot():
     res = requests.get("https://transparency.entsoe.eu/api?documentType=A44&securityToken=dcce50af-fffe-43ee-b8b8-b2a0bdc35d6f&in_Domain=10Y1001A1001A82H&out_Domain=10Y1001A1001A82H", params={'periodStart': (datetime.datetime.today()- datetime.timedelta(days=2)).strftime("%Y%m%d")+"2200", 'periodEnd': (datetime.datetime.today()- datetime.timedelta(days=1)).strftime("%Y%m%d")+"2200"})
-    prefect.context.get("logger").info(str([ point["price.amount"]  for point in xmltodict.parse(res.content)["Publication_MarketDocument"]["TimeSeries"]["Period"]["Point"]]))
+    print(str([ point["price.amount"]  for point in xmltodict.parse(res.content)["Publication_MarketDocument"]["TimeSeries"]["Period"]["Point"]]))
 
-@task
+
 def fetch_historical_spot():
     client = FaunaClient(secret="fnADwBbPWHACBcWfAJOyZUHjoJ5cMFuZu3k9B2NO")
     df = pd.DataFrame(client.query(q.map_expr(
@@ -28,7 +26,7 @@ def fetch_historical_spot():
     df["ds"] = pd.to_datetime(df['ds'])
     return df
 
-@task
+
 def train_prophet(historical_spot):
     print("hello local")
     model = Prophet(daily_seasonality=True)
@@ -36,7 +34,7 @@ def train_prophet(historical_spot):
     print(historical_spot)
     return model.fit(historical_spot)
 
-@task
+
 def predict_spot(model, historical_spot, years):
     future = pd.date_range(start=(historical_spot["ds"]).max(), end=historical_spot["ds"].max()+pd.offsets.DateOffset(years=years), freq="H").to_frame(index=False, name='ds')
     forecast = model.predict(future)
@@ -45,14 +43,13 @@ def predict_spot(model, historical_spot, years):
     plt.show()
     return forecast
 
-@task
 def write_to_db(items, collection, index, unique_key):
     def chunk(seq, size):
         return (seq[pos:pos + size] for pos in range(0, len(seq), size))
     client = FaunaClient(secret="fnADwBbPWHACBcWfAJOyZUHjoJ5cMFuZu3k9B2NO")
     items = [{"datetime": item['ds'].replace('Z', ''), "price": item['yhat'], **item} for item in json.loads(items.to_json(orient='records', date_format="iso"))]
     for items in chunk(items, 500):
-        prefect.context.get("logger").info(str(items))
+        print(str(items))
         client.query(
     q.map_expr(
         lambda item:
@@ -65,9 +62,9 @@ def write_to_db(items, collection, index, unique_key):
     )
 
 
-with Flow('Power Spot Flow') as power_spot_flow:
-    fetch_daily_spot()
-    historical_spot = fetch_historical_spot()
-    trained_model = train_prophet(historical_spot)
-    forecast = predict_spot(trained_model, historical_spot, 6)
-    write_to_db(forecast, "PowerSpotForecast","power_spot_forecast_datetime", "datetime")
+
+fetch_daily_spot()
+historical_spot = fetch_historical_spot()
+trained_model = train_prophet(historical_spot)
+forecast = predict_spot(trained_model, historical_spot, 6)
+write_to_db(forecast, "PowerSpotForecast","power_spot_forecast_datetime", "datetime")

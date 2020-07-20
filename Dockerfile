@@ -1,4 +1,4 @@
-FROM prefecthq/prefect:0.12.2-python3.6
+FROM python:3.6-slim-buster
 
 # install some base utilities
 RUN apt update && apt install build-essential -y build-essential && rm -rf /var/lib/apt/lists/*
@@ -30,9 +30,9 @@ RUN pip install 'holidays==0.9.12'
 RUN pip install 'fbprophet<0.6' 
 RUN pip install 'PyGithub'
 
-ENV PREFECT__CLOUD__AGENT__AUTH_TOKEN=tpqKLNNyqrwjSFjK4KAyp
-ENV PREFECT__CONTEXT__SECRETS__GITHUB_ACCESS_TOKEN=f4406b8f23a45827ce0d56519246d9750a919c93
-ENTRYPOINT [ "prefetc", "agent", "start", "local", "-t", "tpqKLNNyqrwjSFjK4KAyp" ]
+#ENV PREFECT__CLOUD__AGENT__AUTH_TOKEN=tpqKLNNyqrwjSFjK4KAyp
+
+#ENTRYPOINT [ "prefetc", "agent", "start", "local", "-t", "tpqKLNNyqrwjSFjK4KAyp" ]
 #ENTRYPOINT ["sh", "-c", "prefect agent start local -t $PREFECT__CLOUD__AGENT__AUTH_TOKEN"]
 #ENTRYPOINT [ "python", "/src/main.py" ]
 

@@ -9,6 +9,7 @@ from faunadb.objects import Ref
 from faunadb.client import FaunaClient
 import requests
 import xmltodict
+import os
 
 
 
@@ -45,7 +46,7 @@ def predict_spot(model, future):
 def write_to_db(items, collection, index, unique_key):
     def chunk(seq, size):
         return (seq[pos:pos + size] for pos in range(0, len(seq), size))
-    client = FaunaClient(secret="fnADwBbPWHACBcWfAJOyZUHjoJ5cMFuZu3k9B2NO")
+    client = FaunaClient(secret=os.environ["FAUNA_SECRET"])
     for items in chunk(items, 500):
         print(len(items))
         client.query(
@@ -60,7 +61,7 @@ def write_to_db(items, collection, index, unique_key):
     )
 
 
-
+print(os.environ["FAUNA_SECRET"])
 fetch_daily_spot()
 historical_spot = fetch_historical_spot()
 trained_model = train_prophet(historical_spot)

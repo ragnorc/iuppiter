@@ -29,4 +29,4 @@ jobs:
     - name: Run Power Spot Flow
       run: python $GITHUB_WORKSPACE/src/power_spot_flow.py
       env: # Or as an environment variable
-        FAUNA_SECRET: ${{ secrets.FAUNA_SECRET }
+        FAUNA_SECRET: ${{ secrets.FAUNA_SECRET }}

@@ -35,19 +35,17 @@ def train_prophet(historical_spot):
     return model.fit(historical_spot)
 
 
-def predict_spot(model, historical_spot, years):
-    future = pd.date_range(start=(historical_spot["ds"]).max(), end=historical_spot["ds"].max()+pd.offsets.DateOffset(years=years), freq="H").to_frame(index=False, name='ds')
+def predict_spot(model, future):
     forecast = model.predict(future)
     fig = model.plot(forecast)
     a = add_changepoints_to_plot(fig.gca(), model, forecast)
-    plt.show()
+    #plt.show()
     return forecast
 
 def write_to_db(items, collection, index, unique_key):
     def chunk(seq, size):
         return (seq[pos:pos + size] for pos in range(0, len(seq), size))
     client = FaunaClient(secret="fnADwBbPWHACBcWfAJOyZUHjoJ5cMFuZu3k9B2NO")
-    items = [{"datetime": item['ds'].replace('Z', ''), "price": item['yhat'], **item} for item in json.loads(items.to_json(orient='records', date_format="iso"))]
     for items in chunk(items, 500):
         print(len(items))
         client.query(
@@ -66,5 +64,6 @@ def write_to_db(items, collection, index, unique_key):
 fetch_daily_spot()
 historical_spot = fetch_historical_spot()
 trained_model = train_prophet(historical_spot)
-forecast = predict_spot(trained_model, historical_spot, 6)
-write_to_db(forecast, "PowerSpotForecast","power_spot_forecast_datetime", "datetime")
+forecast = predict_spot(trained_model, pd.date_range(start=(historical_spot["ds"]).max(), end=historical_spot["ds"].max()+pd.offsets.DateOffset(years=6), freq="H").to_frame(index=False, name='ds'))
+print(forecast)
+write_to_db([{"datetime": item['ds'].replace('Z', ''), "price": item['yhat'], **item} for item in json.loads(forecast.to_json(orient='records', date_format="iso"))], "PowerSpotForecast","power_spot_forecast_datetime", "datetime")

@@ -24,4 +24,4 @@ def fetch_daily_spot():
 
 
 daily_spot = fetch_daily_spot()
-print([{**item, "datetime": item['datetime'].replace('Z', '')} for item in json.loads(daily_spot.to_json(orient='records', date_format="iso"))], "PowerSpot","power_spot_datetime", "datetime")
+write_to_db([{**item, "datetime": item['datetime'].replace('Z', '')} for item in json.loads(daily_spot.to_json(orient='records', date_format="iso"))], "PowerSpot","power_spot_datetime", "datetime")

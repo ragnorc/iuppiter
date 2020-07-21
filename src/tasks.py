@@ -3,9 +3,6 @@ from faunadb.objects import Ref
 from faunadb.client import FaunaClient
 import os
 
-os.environ["FAUNA_SECRET"] = "fnADwBbPWHACBcWfAJOyZUHjoJ5cMFuZu3k9B2NO"
-
-
 def write_to_db(items, collection, index, unique_key):
     def chunk(seq, size):
         return (seq[pos:pos + size] for pos in range(0, len(seq), size))

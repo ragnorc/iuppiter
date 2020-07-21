@@ -225,6 +225,14 @@ version = "0.15.2"
 
 [[package]]
 category = "main"
+description = "Handle .env files"
+name = "dotenv"
+optional = false
+python-versions = "*"
+version = "0.0.5"
+
+[[package]]
+category = "main"
 description = "Compute positions of the planets and stars"
 name = "ephem"
 optional = false
@@ -863,7 +871,7 @@ version = "2.0.0"
 heapdict = "*"
 
 [metadata]
-content-hash = "4616d7ff5635753f98e0dab7d69f3a1df4a47c7b84523f7bc781a751a6645b46"
+content-hash = "e6317c385527fc3e81e1dc94bf2062524ad07e0d4e7af11d4d22a95945aafc20"
 python-versions = "3.6.0"
 
 [metadata.files]
@@ -954,6 +962,9 @@ docutils = [
     {file = "docutils-0.15.2-py2-none-any.whl", hash = "sha256:9e4d7ecfc600058e07ba661411a2b7de2fd0fafa17d1a7f7361cd47b1175c827"},
     {file = "docutils-0.15.2-py3-none-any.whl", hash = "sha256:6c4f696463b79f1fb8ba0c594b63840ebd41f059e92b31957c46b74a4599b6d0"},
     {file = "docutils-0.15.2.tar.gz", hash = "sha256:a2aeea129088da402665e92e0b25b04b073c04b2dce4ab65caaa38b7ce2e1a99"},
+]
+dotenv = [
+    {file = "dotenv-0.0.5.tar.gz", hash = "sha256:b58d2ab3f83dbd4f8a362b21158a606bee87317a9444485566b3c8f0af847091"},
 ]
 ephem = [
     {file = "ephem-3.7.7.1-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:0a6d6ed003383f702695094399728052981c567d423b25aa7163b3fd40de3d5a"},

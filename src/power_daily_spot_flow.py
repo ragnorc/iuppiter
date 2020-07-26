@@ -8,7 +8,7 @@ from faunadb.client import FaunaClient
 import requests
 import xmltodict
 import os
-from tasks import write_to_db
+from utils import write_to_db
 from dateutil import tz
 
 
@@ -30,4 +30,4 @@ def fetch_daily_spot(day):
 
 daily_spot = fetch_daily_spot(datetime.datetime.today()-datetime.timedelta(days=1))
 print(daily_spot)
-write_to_db([{**item, "datetime": item['datetime'].replace('Z', '')} for item in json.loads(daily_spot.to_json(orient='records', date_format="iso"))], "PowerSpot","power_spot_datetime", "datetime")
+write_to_db([{**item, "datetime": item['datetime'].replace('Z', '')} for item in json.loads(daily_spot.to_json(orient='records', date_format="iso"))], "PowerSpot","power_spot_datetime", ["datetime"])

@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.common.exceptions import ElementNotInteractableException
+from selenium.webdriver.firefox.options import Options
 import time
 import pandas as pd
 from datetime import datetime
@@ -23,7 +24,9 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
 
     url = 'https://www.check24.de/strom/'
 
-    driver = webdriver.Firefox()
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options)
     driver.get(url)
 
     time.sleep(2)

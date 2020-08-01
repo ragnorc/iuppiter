@@ -2,7 +2,7 @@ FROM python:3.6-slim-buster
 
 # install some base utilities
 RUN apt update && apt install build-essential -y build-essential && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install curl firefox chromium -y
+RUN apt-get update && apt-get install curl firefox-esr chromium -y
 
 # Mono: 5.20
 

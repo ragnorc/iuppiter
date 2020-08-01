@@ -2,7 +2,7 @@ FROM python:3.6-slim-buster
 
 # Install some base utilities
 RUN apt update && apt install build-essential -y build-essential && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install wget curl chromium -y
+RUN apt-get update && apt-get install wget curl unzip -y
 
 # install chromedriver, google-chrome and gecko driver
 

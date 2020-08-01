@@ -1,12 +1,28 @@
 type PowerFuture {
-   tradeTime: Time!
-   tradePrice: Float
-   closePrice: Float
+   closePrice: Float,
+   type: String!,
+   product: String!,
+   year:  String,
+   quarter: String,
+   month: String
 }
 
 type PowerSpot {
    datetime: String! @unique(index: "power_spot_datetime")
    price: Float
+}
+
+type EndCustomerRate {
+   date: String!
+   zipcode: String
+   consumption: Int
+   loadProfile: String
+   grossHourlyRate: Float
+   grossBaseRate: Float
+   netHourlyRate: Float
+   netBaseRate: Float
+   immediateBonus: Float
+   newCustomerBonus: Float
 }
 
 

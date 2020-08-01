@@ -2,8 +2,7 @@ FROM python:3.6-slim-buster
 
 # install some base utilities
 RUN apt update && apt install build-essential -y build-essential && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install curl -y
-
+RUN apt-get update && apt-get install curl firefox chromium -y
 
 # Mono: 5.20
 
@@ -29,6 +28,8 @@ RUN pip install 'pystan>=2.19.0, <3.0.0'
 RUN pip install 'holidays==0.9.12'
 RUN pip install 'fbprophet<0.6' 
 RUN pip install 'PyGithub'
+RUN pip install 'selenium'
+
 
 #ENV PREFECT__CLOUD__AGENT__AUTH_TOKEN=tpqKLNNyqrwjSFjK4KAyp
 

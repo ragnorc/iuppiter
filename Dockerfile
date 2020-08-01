@@ -22,10 +22,12 @@ RUN FIREFOX_SETUP=firefox-setup.tar.bz2 && \
 
 # Mono
 
-RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D3D831EF \
-&& echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | sudo tee /etc/apt/sources.list.d/mono-stable.list \
-&& apt install mono-complete mono-devel
-
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
+&& echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" > /etc/apt/sources.list.d/mono-stable.list \
+  && apt-get update \
+  && apt-get install -y clang \
+  && apt-get install -y mono-devel \
+  && rm -rf /var/lib/apt/lists/* /tmp/*
 
 RUN pip install --upgrade setuptools
 

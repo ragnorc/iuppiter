@@ -131,7 +131,6 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
         df['date'] = datetime.today().date().isoformat()
         df['rank'] = df.index
 
-
         print(df)
         return df
 

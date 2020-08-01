@@ -1,12 +1,12 @@
 FROM python:3.6-slim-buster
 
 # Install some base utilities
-RUN apt update && apt install build-essential -y build-essential && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install wget curl firefox-esr chromium -y
+RUN apt update && apt install build-essential -y build-essential firefox && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install wget curl chromium -y
 
 # Install geckodriver
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz \
-&& tar -zxf geckodriver-v0.26.0-linux64.tar.gz -C /usr/bin \
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.27.0/geckodriver-v0.27.0-linux64.tar.gz \
+&& tar -zxf geckodriver-v0.27.0-linux64.tar.gz -C /usr/bin \
 && geckodriver --version
 
 # Mono: 5.20

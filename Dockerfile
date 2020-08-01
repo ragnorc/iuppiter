@@ -2,7 +2,7 @@ FROM ubuntu:bionic
 
 # Install some base utilities
 RUN apt update && apt install build-essential -y build-essential && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install wget curl unzip chromium -y
+RUN apt-get update && apt-get install wget curl unzip -y
 
 # install geckodriver and firefox
 

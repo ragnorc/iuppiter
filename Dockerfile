@@ -1,7 +1,7 @@
 FROM ubuntu:bionic
 
 # Install some base utilities
-RUN apt update && apt install build-essential -y build-essential && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install build-essential -y build-essential gnupg ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install wget curl unzip -y
 
 # install geckodriver and firefox
@@ -20,14 +20,12 @@ RUN FIREFOX_SETUP=firefox-setup.tar.bz2 && \
     rm $FIREFOX_SETUP
 
 
-# Mono: 5.20
+# Mono
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
-  && echo "deb http://download.mono-project.com/repo/debian stretch/snapshots/5.20 main" > /etc/apt/sources.list.d/mono-official.list \
-  && apt-get update \
-  && apt-get install -y clang \
-  && apt-get install -y mono-devel=5.20\* \
-  && rm -rf /var/lib/apt/lists/* /tmp/*
+RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D3D831EF \
+&& echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | sudo tee /etc/apt/sources.list.d/mono-stable.list \
+&& apt install mono-complete mono-devel
+
 
 RUN pip install --upgrade setuptools
 

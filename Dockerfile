@@ -2,7 +2,7 @@ FROM python:3.6-slim-buster
 
 # Install some base utilities
 RUN apt update && apt install build-essential -y build-essential && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install curl firefox-esr chromium -y
+RUN apt-get update && apt-get install wget curl firefox-esr chromium -y
 
 # Install geckodriver
 RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz \

@@ -14,7 +14,7 @@ from selenium import webdriver
 from selenium.common.exceptions import ElementNotInteractableException
 from datetime import datetime
 from sqlalchemy import create_engine
-
+import json
 import csv
 import time
 # import numpy as np
@@ -269,14 +269,14 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
 
     time.sleep(2)
 
-    try:
-        cookie_button = driver.find_element_by_class_name(
-            'c24-cookie-button')
+#    try:
+#        cookie_button = driver.find_element_by_class_name(
+#            'c24-cookie-button')
 
-        cookie_button.click()
+#        cookie_button.click()
 
-    except ElementNotInteractableException:
-        pass
+#    except ElementNotInteractableException:
+#        pass
 
     zipcode_input = driver.find_element_by_id('c24api_zipcode')
     zipcode_input.clear()
@@ -330,14 +330,14 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
         df = pd.DataFrame(columns=columns)
 
         # Process Data and append to dataframe
-
+        print(data)
         df['hourly_rates'] = [
-            float(e[e.index('Arbeitspreis') + 3].replace(',', '.'))
+            float(e[e.index('Arbeitspreis') + 5].replace(',', '.'))
             if 'Arbeitspreis' in e else None for e in data
         ]
 
         df['basic_rates'] = [
-            float(e[e.index('Grundpreis') + 1].replace(',', '.'))
+            float(e[e.index('Grundpreis') + 3].replace(',', '.'))
             if 'Grundpreis' in e else None for e in data
         ]
 
@@ -406,7 +406,7 @@ if __name__ == "__main__":
 
     #print(get_historical_dayahead_futures_eex(start_date, end_date, ENV))
 
-    pp.pprint(get_power_futures_exx())
+    #pp.pprint(get_power_futures_exx())
     #pp.pprint(get_end_customer_rates_check24(zipcode, consumption))
 
-    # pp.pprint(json.loads(get_end_customer_rates_check24(zipcode, consumption)))
+    pp.pprint(json.loads(get_end_customer_rates_check24(zipcode, consumption)))

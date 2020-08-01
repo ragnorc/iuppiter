@@ -135,7 +135,6 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
         print(df)
         return df
 
-
 for zipcode in [53604, 49090]:
     end_customer_rates = get_end_customer_rates_check24(zipcode, 2500)
     write_to_db(json.loads(end_customer_rates.to_json(orient='records')), "EndCustomerRate", "end_customer_rate_unique", ["date", "rank", "zipcode", "consumption", "loadProfile"])

@@ -30,6 +30,7 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
     driver.get(url)
 
     time.sleep(2)
+    
 
 #    try:
 #        cookie_button = driver.find_element_by_class_name(

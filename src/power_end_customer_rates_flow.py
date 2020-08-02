@@ -26,7 +26,7 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
 
     options = Options()
     options.add_argument('-headless')
-    driver = webdriver.Firefox(executable_path='geckodriver', options=options)
+    driver = webdriver.Chrome(options=options)
     driver.get(url)
 
     time.sleep(2)

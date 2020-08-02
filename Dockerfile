@@ -41,7 +41,7 @@ RUN CHROME_SETUP=google-chrome.deb && \
     wget -O $CHROME_SETUP "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" && \
     dpkg -i $CHROME_SETUP && \
     apt-get install -y -f && \
-    rm $CHROME_SETU
+    rm $CHROME_SETUP
 
 
 # Mono

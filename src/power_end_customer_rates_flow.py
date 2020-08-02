@@ -25,8 +25,8 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
     url = 'https://www.check24.de/strom/'
 
     options = Options()
-    options.headless = True
-    driver = webdriver.Firefox(options=options)
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(executable_path='geckodriver', options=options)
     driver.get(url)
 
     time.sleep(2)

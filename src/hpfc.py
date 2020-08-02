@@ -2,6 +2,8 @@ import calendar
 import numpy as np
 import pandas as pd
 from pandas import Period
+
+from utils import fetch_all_from_db
 cal = calendar.Calendar()
 import time
 import matplotlib.pyplot as plt
@@ -9,6 +11,7 @@ from fbprophet import Prophet
 from curves import bootstrap_contracts, max_smooth_interp, adjustments
 from curves import contract_period as cp
 from spot_predictor import SpotPredictor
+from utils import fetch_all_from_db, fetch_all_from_index
 from datetime import date
 import pickle
 import shelve
@@ -21,14 +24,15 @@ class HPFC:
 
         self.years = [2021,2022,2023]
         self.spotPredictor = SpotPredictor('model.pckl')
-        self.forecasts_daily = self.spotPredictor.predict(pd.date_range(start=str(2020), end=str(2024), freq="D").to_frame(index=False, name='ds'))
-        self.forecasts_hourly = self.spotPredictor.predict(pd.date_range(start=str(2020), end=str(2024), freq="H").to_frame(index=False, name='ds'))
+        self.forecasts_hourly = fetch_all_from_db("PowerSpotForecast")
         self.shelve = shelve.open("store.db")
-        self.shelve["test"] = "test"
         
 
         # Create full futures table for historical learning and one with removed redundancies to pass to curves
         #TODO: Remove redundant contracts automatically
+
+
+
         data = [
                 ["year", 2021, None, None, 36.265, 40.84, None], #Redundant
                 ["year", 2022, None, None, 40.63, 51.03, None],
@@ -55,8 +59,11 @@ class HPFC:
                 ["month", 2020, 4, 10, 34.13, 43.33, None],
                 ["month", 2020, 4, 11, 38.53, 49.99, None]]
 
+        data = fetch_all_from_index("power_future_by_date", "2020-07-26")
+
         self.original_futures = pd.DataFrame(
             data, columns=['product', 'year', 'quarter', 'month', 'base', 'peak', 'offpeak']).astype({"year": pd.Int64Dtype(), "month": pd.Int64Dtype(), "quarter": pd.Int64Dtype(), "peak": "float64"})
+        print(self.original_futures)
         self.futures = self.get_cleaned_futures(self.original_futures)
 
 

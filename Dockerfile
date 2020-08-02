@@ -4,6 +4,12 @@ FROM ubuntu:bionic
 RUN apt update && apt install build-essential -y build-essential gnupg ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install wget curl unzip -y
 
+RUN apt-get update \
+  && apt-get install -y python3-pip python3-dev \
+  && cd /usr/local/bin \
+  && ln -s /usr/bin/python3 python \
+  && pip3 install --upgrade pip
+
 # install geckodriver and firefox
 
 RUN GECKODRIVER_VERSION=`curl https://github.com/mozilla/geckodriver/releases/latest | grep -Po 'v[0-9]+.[0-9]+.[0-9]+'` && \

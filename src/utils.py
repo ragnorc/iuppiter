@@ -30,4 +30,14 @@ def fetch_all_from_db(collection):
         after = result.get("after", None)
     return data
 
+def fetch_all_from_index(index, values = []):
+    after = ""
+    data = []
+    while after is not None:
+        client = FaunaClient(secret=os.environ["FAUNA_SECRET"])
+        result = client.query(q.map_expr(lambda x: q.select("data",q.get(x)), q.paginate(q.match(q.index(index), values), size=100000, after=after)))
+        data += result["data"]
+        after = result.get("after", None)
+    return data
+
 #fetch_all_from_db("PowerSpot")

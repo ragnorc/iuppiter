@@ -5,7 +5,7 @@ description = ""
 authors = ["Ragnor Comerford <hello@ragnor.co>"]
 
 [tool.poetry.dependencies]
-python = "3.6.0"
+python = "3.7.0"
 boto3 = "^1.14.18"
 numpy = "^1.19.0"
 fbprophet = "^0.6"

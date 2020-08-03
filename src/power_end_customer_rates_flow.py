@@ -25,10 +25,10 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
     url = 'https://www.check24.de/strom/vergleich/check24/?pid=24&zipcode={}&totalconsumption={}&contractperiod_toggle=12&considerdiscounts=yes&maxbonusshare=yes&eco=no&eco_type=normal&priceguarantee=fixed_price&priceguarantee_months=12&companyevaluation_positive=yes&customertype=private&contractperiod=12&cancellationperiod=42&pagesize=500'.format(zipcode, consumption)
 
     chrome_options = webdriver.ChromeOptions()
-    #chrome_options.add_argument('--no-sandbox')
-    #chrome_options.add_argument('--window-size=1420,1080')
-    #chrome_options.add_argument('--headless')
-    #chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--window-size=1420,1080')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-gpu')
     driver = webdriver.Chrome(chrome_options=chrome_options)
     driver.get(url)
 

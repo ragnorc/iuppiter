@@ -8,7 +8,7 @@ import json
 from utils import write_to_db
 
 
-def get_end_customer_rates_check24(zipcode, consumption, csv=False):
+def get_end_customer_rates_check24(location, consumption, csv=False):
 
     """
         Scrapes Data from the check24 website.
@@ -22,14 +22,16 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
     #validate_zipcode(zipcode)
     #validate_consumption(consumption)
 
-    url = 'https://www.check24.de/strom/vergleich/check24/?pid=24&zipcode={}&totalconsumption={}&contractperiod_toggle=12&considerdiscounts=yes&maxbonusshare=yes&eco=no&eco_type=normal&priceguarantee=fixed_price&priceguarantee_months=12&companyevaluation_positive=yes&customertype=private&contractperiod=12&cancellationperiod=42&pagesize=500'.format(zipcode, consumption)
+    zipcode, city = location if isinstance(location, tuple) else (location, "")
 
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--window-size=1420,1080')
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--disable-gpu')
-    driver = webdriver.Chrome(chrome_options=chrome_options)
+    url = 'https://www.check24.de/strom/vergleich/check24/?pid=24&zipcode={}&totalconsumption={}&city={}&contractperiod_toggle=12&considerdiscounts=yes&maxbonusshare=yes&eco=no&eco_type=normal&priceguarantee=fixed_price&priceguarantee_months=12&companyevaluation_positive=yes&customertype=private&contractperiod=12&cancellationperiod=42&pagesize=500'.format(zipcode, consumption, city)
+
+    options = webdriver.ChromeOptions()
+    options.add_argument('--no-sandbox')
+    options.add_argument('--window-size=1420,1080')
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
+    driver = webdriver.Chrome(options=options)
     driver.get(url)
 
     time.sleep(2)
@@ -131,7 +133,7 @@ def get_end_customer_rates_check24(zipcode, consumption, csv=False):
     print(df)
     return df
 
-for zipcode in [53604, 49090, 73312]:
+for location in [53604, 49090, (73312, "Geislingen")]:
     for consumption in [1500 ,2500 ,4000 ,5500,10000]:
-        end_customer_rates = get_end_customer_rates_check24(zipcode, consumption)
+        end_customer_rates = get_end_customer_rates_check24(location, consumption)
         write_to_db(json.loads(end_customer_rates.to_json(orient='records')), "EndCustomerRate", "end_customer_rate_unique", ["date", "rank", "zipcode", "consumption", "loadProfile"])

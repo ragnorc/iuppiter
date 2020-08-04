@@ -17,6 +17,9 @@ xmltodict = "^0.12.0"
 PyGithub = "^1.51"
 python-dotenv = "^0.14.0"
 selenium = "^3.141.0"
+setuptools = "^49.2.1"
+wheel = "^0.34.2"
+curves = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 

@@ -5,6 +5,9 @@ name: Power Spot Forecast Flow
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
+  push:
+    paths:
+    - 'src/power_spot_forecast_flow.py'
   schedule:
   - cron: "0 0 * * 0"
 
@@ -23,7 +26,7 @@ jobs:
 
 
     # Runs a set of commands using the runners shell
-    - name: Run Power Forecast Flow
+    - name: Run power_spot_forecast_flow.py
       run: python $GITHUB_WORKSPACE/src/power_spot_forecast_flow.py
       env: # Or as an environment variable
         FAUNA_SECRET: ${{ secrets.FAUNA_SECRET }}

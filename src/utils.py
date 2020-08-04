@@ -25,7 +25,7 @@ def fetch_all_from_db(collection):
     data = []
     while after is not None:
         client = FaunaClient(secret=os.environ["FAUNA_SECRET"])
-        result = client.query(q.map_expr(lambda x: q.select("data",q.get(x)), q.paginate(q.documents(q.collection(collection)), size=100000, after=after)))
+        result = client.query(q.map_expr(lambda x: q.select("data",q.get(x)), q.paginate(q.documents(q.collection(collection)), size=10000, after=after)))
         data += result["data"]
         after = result.get("after", None)
     return data

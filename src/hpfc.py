@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 from fbprophet import Prophet
 from curves import bootstrap_contracts, max_smooth_interp, adjustments
 from curves import contract_period as cp
-from spot_predictor import SpotPredictor
 from utils import fetch_all_from_db, fetch_all_from_index
 from datetime import date
 import pickle
@@ -23,8 +22,7 @@ class HPFC:
     def __init__(self):
 
         self.years = [2021,2022,2023]
-        self.spotPredictor = SpotPredictor('model.pckl')
-        self.forecasts_hourly = fetch_all_from_db("PowerSpotForecast")
+        self.forecasts_hourly = [] #fetch_all_from_db("PowerSpotForecast")
         self.shelve = shelve.open("store.db")
         
 
@@ -60,9 +58,10 @@ class HPFC:
                 ["month", 2020, 4, 11, 38.53, 49.99, None]]
 
         data = fetch_all_from_index("power_future_by_date", "2020-07-26")
+        print(data)
 
         self.original_futures = pd.DataFrame(
-            data, columns=['product', 'year', 'quarter', 'month', 'base', 'peak', 'offpeak']).astype({"year": pd.Int64Dtype(), "month": pd.Int64Dtype(), "quarter": pd.Int64Dtype(), "peak": "float64"})
+            data, columns=['product', 'year', 'quarter', 'month', 'base', 'peak', 'offpeak'])
         print(self.original_futures)
         self.futures = self.get_cleaned_futures(self.original_futures)
 
@@ -180,8 +179,8 @@ class HPFC:
         day = period.asfreq("D").start_time
         print(period.asfreq("D"))
         print(period)
-        add_daily = self.forecasts_hourly.query("ds == @period.start_time")["weekly"].iloc[0] #self.forecasts_daily.query("ds == @day")["weekly"].iloc[0]
-        add_hourly = self.forecasts_hourly.query("ds == @period.start_time")["daily"].iloc[0]
+        add_daily = self.forecasts_hourly.query("datetime == @period.start_time.isoformat()")["weekly"].iloc[0] #self.forecasts_daily.query("ds == @day")["weekly"].iloc[0]
+        add_hourly = self.forecasts_hourly.query("datetime == @period.start_time.isoformat()")["daily"].iloc[0]
         print(add_daily)
         print(add_hourly)
         return  add_daily + add_hourly

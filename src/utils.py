@@ -1,15 +1,16 @@
 from faunadb import query as q
 from faunadb.objects import Ref
 from faunadb.client import FaunaClient
+from faunadb.client_logger import logger
 import os
 
 def write_to_db(items, collection, index, unique_keys):
     def chunk(seq, size):
         return (seq[pos:pos + size] for pos in range(0, len(seq), size))
-    client = FaunaClient(secret=os.environ["FAUNA_SECRET"])
+    client = FaunaClient(secret=os.environ["FAUNA_SECRET"], observer=logger(log))
     for items in chunk(items, 500):
         print(len(items))
-        client.query(
+    client.query(
     q.map_expr(
         lambda item:
        q.call(
@@ -19,6 +20,7 @@ def write_to_db(items, collection, index, unique_keys):
       items
         )
     )
+  
 
 def fetch_all_from_db(collection):
     after = ""
@@ -41,3 +43,7 @@ def fetch_all_from_index(index, values = []):
     return data
 
 #fetch_all_from_db("PowerSpot")
+
+
+def log(logged):
+  print(logged)

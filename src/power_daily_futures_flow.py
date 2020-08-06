@@ -10,6 +10,8 @@ import math
 from utils import write_to_db
 from dateutil import tz
 
+
+
 def fetch_eex_futures(product, type, date):
     data = requests.get("https://wrapapi.com/use/ragnorc/eex/futures/latest", params={"wrapAPIKey": "Vw52prEVYvxTYP7JN9MpNCIDVOKvf2iI", "product": '"/E.DE{}{}"'.format(type[0].upper(), product[0].upper()), "expirationDate": date.strftime("%Y/%m/%d"), "onDate": date.strftime("%Y/%m/%d")}).json()["data"]["output"]
     results = []
@@ -28,15 +30,14 @@ def fetch_eex_futures(product, type, date):
          
     } 
             result[type] = x["close"]
-            result["original_"+type] = {
-            **x
-        },
+            result["original_"+type] = x
+        
             results.append(result)
     return results
 
 
 for product in ["month", "quarter", "year"]:
     for type in {"base", "peak"}:
-        data = fetch_eex_futures(product, type, datetime.datetime.today() - datetime.timedelta(1))
+        data = fetch_eex_futures(product, type, datetime.datetime.today() - datetime.timedelta(2))
         print(data)
-        write_to_db(data, "PowerFuture", "power_future_unique", ["date", "product", "displayDate"])
+        write_to_db(data, "PowerFutures", "power_futures_unique", ["date", "product", "displayDate"])

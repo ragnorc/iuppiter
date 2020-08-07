@@ -13,7 +13,6 @@ from curves import contract_period as cp
 from utils import fetch_all_from_db, fetch_all_from_index, cached
 from datetime import date
 import pickle
-import shelve
 
 
 
@@ -22,10 +21,7 @@ class HPFC:
     def __init__(self):
 
         self.years = [2021,2022,2023]
-        self.forecasts_hourly = pd.DataFrame(fetch_all_from_db("PowerSpotForecast"))
-        print(self.forecasts_hourly[self.forecasts_hourly["datetime"] == '2020-07-01T00:00:00.000']["weekly"].iloc[0])
-        self.shelve = shelve.open("store.db")
-        
+        self.forecasts_hourly = pd.DataFrame(fetch_all_from_db("PowerSpotForecast"))        
 
         # Create full futures table for historical learning and one with removed redundancies to pass to curves
         #TODO: Remove redundant contracts automatically

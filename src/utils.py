@@ -3,11 +3,12 @@ from faunadb.objects import Ref
 from faunadb.client import FaunaClient
 from faunadb.client_logger import logger
 import os
+import pickle
 
 def write_to_db(items, collection, index, unique_keys):
     def chunk(seq, size):
         return (seq[pos:pos + size] for pos in range(0, len(seq), size))
-    client = FaunaClient(secret=os.environ["FAUNA_SECRET"], observer=logger(log))
+    client = FaunaClient(secret=os.environ["FAUNA_SECRET"], observer=logger(lambda x: print(x)))
     for items in chunk(items, 500):
         print(len(items))
     client.query(
@@ -45,5 +46,28 @@ def fetch_all_from_index(index, values = []):
 #fetch_all_from_db("PowerSpot")
 
 
-def log(logged):
-  print(logged)
+def cached(cachefile):
+    """
+    A function that creates a decorator which will use "cachefile" for caching the results of the decorated function "fn".
+    """
+    def decorator(fn):  # define a decorator for a function "fn"
+        def wrapped(*args, **kwargs):   # define a wrapper that will finally call "fn" with all arguments            
+            # if cache exists -> load it and return its content
+            if os.path.exists(cachefile):
+                    with open(cachefile, 'rb') as cachehandle:
+                        print("using cached result from '%s'" % cachefile)
+                        return pickle.load(cachehandle)
+
+            # execute the function with all arguments passed
+            res = fn(*args, **kwargs)
+
+            # write to cache file
+            with open(cachefile, 'wb') as cachehandle:
+                print("saving result to cache '%s'" % cachefile)
+                pickle.dump(res, cachehandle)
+
+            return res
+
+        return wrapped
+
+    return decorator   # return this "customized" decorator that uses "cachefile"

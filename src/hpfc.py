@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from fbprophet import Prophet
 from curves import bootstrap_contracts, max_smooth_interp, adjustments
 from curves import contract_period as cp
-from utils import fetch_all_from_db, fetch_all_from_index
+from utils import fetch_all_from_db, fetch_all_from_index, cached
 from datetime import date
 import pickle
 import shelve
@@ -22,7 +22,8 @@ class HPFC:
     def __init__(self):
 
         self.years = [2021,2022,2023]
-        self.forecasts_hourly = [] #fetch_all_from_db("PowerSpotForecast")
+        self.forecasts_hourly = pd.DataFrame(fetch_all_from_db("PowerSpotForecast"))
+        print(self.forecasts_hourly[self.forecasts_hourly["datetime"] == '2020-07-01T00:00:00.000']["weekly"].iloc[0])
         self.shelve = shelve.open("store.db")
         
 
@@ -57,23 +58,27 @@ class HPFC:
                 ["month", 2020, 4, 10, 34.13, 43.33, None],
                 ["month", 2020, 4, 11, 38.53, 49.99, None]]
 
-        data = fetch_all_from_index("power_future_by_date", "2020-07-26")
+        data = fetch_all_from_index("power_futures_by_date", "2020-08-03")
         print(data)
 
         self.original_futures = pd.DataFrame(
-            data, columns=['product', 'year', 'quarter', 'month', 'base', 'peak', 'offpeak'])
+            [x for x in data if("base" in x and "peak" in x) and x["base"] != "" and x["peak"] != ""], columns=['product', 'year', 'quarter', 'month', 'base', 'peak', 'offpeak']).astype({"year": pd.Int64Dtype(), "month": pd.Int64Dtype(), "quarter": pd.Int64Dtype()})
         print(self.original_futures)
         self.futures = self.get_cleaned_futures(self.original_futures)
-
+        self.futures = self.futures[self.futures.year < date.today().year + 4]
+        print(self.futures)
 
     def get_cleaned_futures(self, futures): # Remove redundant contracts
-        cleaned_futures = pd.DataFrame(columns=['product', 'year', 'quarter', 'month', 'base', 'peak', 'offpeak']).astype({"year": pd.Int64Dtype(), "month": pd.Int64Dtype(), "quarter": pd.Int64Dtype(), "peak": "float64"})
+        cleaned_futures = pd.DataFrame(columns=['product', 'year', 'quarter', 'month', 'base', 'peak', 'offpeak']).astype({"year": pd.Int64Dtype(), "month": pd.Int64Dtype(), "quarter": pd.Int64Dtype()})
         for i, row in futures.query("product == 'year'").iterrows():
-            if len(futures.query("product == 'quarter' and year == @row['year']")) < 4:
+            year = row['year']
+            if len(futures.query("product == 'quarter' and year == @year")) < 4:
                  cleaned_futures = cleaned_futures.append(row)
 
         for i, row in futures.query("product == 'quarter'").iterrows():
-            if len(futures.query("product == 'month' and year == @row['year'] and quarter == @row['quarter']")) < 3:
+            year = row['year']
+            quarter = row['quarter']
+            if len(futures.query("product == 'month' and year == @year and quarter == @quarter")) < 3:
                 cleaned_futures = cleaned_futures.append(row)
 
         cleaned_futures = cleaned_futures.append(futures.query("product == 'month'"))
@@ -132,12 +137,13 @@ class HPFC:
         ratios = self.get_quartal_shaping_ratios()  +  self.get_monthly_shaping_ratios()
         peak_pc, peak_bc = bootstrap_contracts(contracts, freq='H', shaping_ratios=ratios, average_weight=(lambda x: 1 if self.is_peak(x) else 0))
         offpeak_pc, offpeak_bc = bootstrap_contracts(contracts, freq='H', shaping_ratios=ratios, average_weight=(lambda x: 0 if self.is_peak(x) else 1))
-        #with open('bc.pckl', 'rb') as fin:
-            #bc_for_spline = pickle.load(fin)
+
         peak_smooth_curve = max_smooth_interp(peak_bc, add_season_adjust=self.add_adjust, average_weight=(lambda x: 1 if self.is_peak(x) else 0), freq='H')
         offpeak_smooth_curve = max_smooth_interp(offpeak_bc, add_season_adjust=self.add_adjust, average_weight=(lambda x: 0 if self.is_peak(x) else 1), freq='H')
-        self.shelve["peak_smooth_curve"] = peak_smooth_curve
-        self.shelve["offpeak_smooth_curve"] = offpeak_smooth_curve
+        #self.shelve["peak_smooth_curve"] = peak_smooth_curve
+        #self.shelve["offpeak_smooth_curve"] = offpeak_smooth_curve
+        peak_smooth_curve = self.shelve["peak_smooth_curve"]
+        offpeak_smooth_curve =  self.shelve["offpeak_smooth_curve"]
         data = []
         for index, value in offpeak_smooth_curve.items():
             data.append(peak_smooth_curve.loc[index] if self.is_peak(pd.Period(index)) else value)
@@ -176,11 +182,10 @@ class HPFC:
         return period.dayofweek < 5 and period.hour >= 8 and period.hour <= 20
 
     def add_adjust(self, period):
-        day = period.asfreq("D").start_time
-        print(period.asfreq("D"))
-        print(period)
-        add_daily = self.forecasts_hourly.query("datetime == @period.start_time.isoformat()")["weekly"].iloc[0] #self.forecasts_daily.query("ds == @day")["weekly"].iloc[0]
-        add_hourly = self.forecasts_hourly.query("datetime == @period.start_time.isoformat()")["daily"].iloc[0]
+        datetime = period.start_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
+        print(self.forecasts_hourly.query("datetime == @datetime"))
+        add_daily =  self.forecasts_hourly[self.forecasts_hourly["datetime"] == datetime]["weekly"].iloc[0] #self.forecasts_daily.query("ds == @day")["weekly"].iloc[0]
+        add_hourly = self.forecasts_hourly[self.forecasts_hourly["datetime"] == datetime]["daily"].iloc[0]
         print(add_daily)
         print(add_hourly)
         return  add_daily + add_hourly

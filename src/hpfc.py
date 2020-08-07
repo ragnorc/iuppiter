@@ -58,7 +58,7 @@ class HPFC:
                 ["month", 2020, 4, 10, 34.13, 43.33, None],
                 ["month", 2020, 4, 11, 38.53, 49.99, None]]
 
-        data = fetch_all_from_index("power_futures_by_date", "2020-08-03")
+        data = fetch_all_from_index("power_futures_by_date", "2020-08-05")
         print(data)
 
         self.original_futures = pd.DataFrame(
@@ -137,13 +137,12 @@ class HPFC:
         ratios = self.get_quartal_shaping_ratios()  +  self.get_monthly_shaping_ratios()
         peak_pc, peak_bc = bootstrap_contracts(contracts, freq='H', shaping_ratios=ratios, average_weight=(lambda x: 1 if self.is_peak(x) else 0))
         offpeak_pc, offpeak_bc = bootstrap_contracts(contracts, freq='H', shaping_ratios=ratios, average_weight=(lambda x: 0 if self.is_peak(x) else 1))
-
         peak_smooth_curve = max_smooth_interp(peak_bc, add_season_adjust=self.add_adjust, average_weight=(lambda x: 1 if self.is_peak(x) else 0), freq='H')
         offpeak_smooth_curve = max_smooth_interp(offpeak_bc, add_season_adjust=self.add_adjust, average_weight=(lambda x: 0 if self.is_peak(x) else 1), freq='H')
         #self.shelve["peak_smooth_curve"] = peak_smooth_curve
         #self.shelve["offpeak_smooth_curve"] = offpeak_smooth_curve
-        peak_smooth_curve = self.shelve["peak_smooth_curve"]
-        offpeak_smooth_curve =  self.shelve["offpeak_smooth_curve"]
+        #peak_smooth_curve = self.shelve["peak_smooth_curve"]
+        #offpeak_smooth_curve =  self.shelve["offpeak_smooth_curve"]
         data = []
         for index, value in offpeak_smooth_curve.items():
             data.append(peak_smooth_curve.loc[index] if self.is_peak(pd.Period(index)) else value)
@@ -183,11 +182,8 @@ class HPFC:
 
     def add_adjust(self, period):
         datetime = period.start_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
-        print(self.forecasts_hourly.query("datetime == @datetime"))
         add_daily =  self.forecasts_hourly[self.forecasts_hourly["datetime"] == datetime]["weekly"].iloc[0] #self.forecasts_daily.query("ds == @day")["weekly"].iloc[0]
         add_hourly = self.forecasts_hourly[self.forecasts_hourly["datetime"] == datetime]["daily"].iloc[0]
-        print(add_daily)
-        print(add_hourly)
         return  add_daily + add_hourly
         
 

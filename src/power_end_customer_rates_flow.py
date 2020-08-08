@@ -1,4 +1,4 @@
-from selenium import webdriver
+from seleniumwire import webdriver
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.firefox.options import Options
 import time
@@ -31,7 +31,12 @@ def get_end_customer_rates_check24(location, consumption, csv=False):
     options.add_argument('--window-size=1420,1080')
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(options=options, seleniumwire_options={
+'proxy': {
+    'http': 'http://auto:MomRfo8iFBxvLzYSLdhvdjS6z@proxy.apify.com:8000',
+    'no_proxy': 'localhost,127.0.0.1,dev_server:8080'
+    }
+})
     driver.get(url)
 
     time.sleep(2)

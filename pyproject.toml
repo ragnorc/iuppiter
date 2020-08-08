@@ -20,6 +20,7 @@ selenium = "^3.141.0"
 setuptools = "^49.2.1"
 wheel = "^0.34.2"
 curves = "^1.0.0"
+selenium-wire = "^2.1.0"
 
 [tool.poetry.dev-dependencies]
 

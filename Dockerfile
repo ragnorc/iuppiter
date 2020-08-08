@@ -69,6 +69,7 @@ RUN pip install 'holidays==0.9.12'
 RUN pip install 'fbprophet<0.6' 
 RUN pip install 'PyGithub'
 RUN pip install 'selenium'
+RUN pip install 'selenium-wire'
 
 
 #ENV PREFECT__CLOUD__AGENT__AUTH_TOKEN=tpqKLNNyqrwjSFjK4KAyp

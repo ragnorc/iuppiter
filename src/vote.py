@@ -70,7 +70,7 @@ def vote():
     driver.quit()  # Close browser
 
 def loo():
-    for i in range(0,21):
+    for i in range(0,7):
         try:
             vote()
         except:
